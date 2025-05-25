@@ -140,7 +140,7 @@ function App() {
                     {likedMovies.map(movie => (
                       <MovieCard
                         key={movie.id}
-                        unlikeMovie={() => unlikeMovie(movie.id)}
+                        unlikeMovie={() => unlikeMovie(movie)}
                         likeMovie={() => likeMovie(movie)}
                         showAdult={showAdult}
                         movie={movie}
@@ -156,7 +156,7 @@ function App() {
                     {movieList.map(movie => (
                       <MovieCard
                         key={movie.id}
-                        unlikeMovie={() => unlikeMovie(movie.id)}
+                        unlikeMovie={() => unlikeMovie(movie)}
                         likeMovie={() => likeMovie(movie)}
                         showAdult={showAdult}
                         movie={movie}
