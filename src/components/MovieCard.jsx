@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import LikeButton from './LikeButton'
 
-function MovieCard({showAdult, isLiked, unlikeMovie, likeMovie, movie: {id, title, vote_average, poster_path, release_date, original_language, adult}}) {
+function MovieCard({showAdult, isLiked, unlikeMovie, likeMovie, movie, movie: {id, title, vote_average, poster_path, release_date, original_language, adult}}) {
 
   return (
     <div className='movie-card'>
@@ -27,7 +27,7 @@ function MovieCard({showAdult, isLiked, unlikeMovie, likeMovie, movie: {id, titl
                 {showAdult && <><span>-</span><span className="text-white">Adult: {adult ? 'True' : 'False'}</span></>}
 
                 <br />
-                <LikeButton unlikeMovie={unlikeMovie} likeMovie={likeMovie} id={id} isLiked={isLiked} />
+                <LikeButton unlikeMovie={unlikeMovie} likeMovie={likeMovie} movie={movie} isLiked={isLiked} />
             </div>
         </div>
     </div>

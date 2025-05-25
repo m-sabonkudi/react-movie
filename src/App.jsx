@@ -5,6 +5,9 @@ import MovieCard from './components/MovieCard'
 import ToggleButton from './components/ToggleButton'
 import Toggle from './components/Toggle'
 import { useDebounce } from 'react-use'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+
 
 const BASE_URL = "https://api.themoviedb.org/3"
 
@@ -24,25 +27,32 @@ function App() {
   const [errorMessage, setErrorMessage] = useState();
   const [loading, setLoading] = useState(true);
   const [showAdult, setShowAdult] = useState(false);
+  const [showLiked, setShowLiked] = useState(false);
   const [debouncedSearchTerm, setdebouncedSearchTerm] = useState('')
+    const [likedMovies, setLikedMovies] = useState([]);
+
+
 
   useDebounce(() => setdebouncedSearchTerm(searchTerm), 500, [searchTerm])
 
-  const [likedMovies, setLikedMovies] = useState([]);
 
-    function likeMovie(id) {
-      setLikedMovies(prevLiked => [...prevLiked, id])
+    function likeMovie(movie) {
+      setLikedMovies(prevLiked => [...prevLiked, movie])
     }
 
-  function unlikeMovie(id) {
-      setLikedMovies(prevLiked => prevLiked.filter((liked) => liked !== id))
+  function unlikeMovie(movie) {
+      setLikedMovies(prevLiked => prevLiked.filter((liked) => liked.id !== movie.id))
     }
+
 
   
   
   async function fetchMovies() {
     setLoading(true)
+
+  
     try {
+
       if (debouncedSearchTerm.trim().length < 2) {
         var endpoint = `${BASE_URL}/discover/movie?sort_by=popularity.desc&include_adult=${showAdult}`
       }
@@ -60,7 +70,6 @@ function App() {
       }
 
       setMovieList(data.results || [])
-      console.log(movieList)
     } catch (error) {
       console.error(error)
       setErrorMessage("Error fetching movies.")
@@ -85,34 +94,78 @@ function App() {
         <header>
           {/* <img src='./hero.png' /> */}
           <h1>Find <span className='text-gradient'>Movies</span> You'll Enjoy Without the Hassle</h1>
-          <Search searchKey={searchKey} searchTerm={searchTerm} />
+          <Search searchKey={searchKey} searchTerm={searchTerm} readOnly={showLiked} />
         </header>
 
         <section className="all-movies">
-          
-          <h2 className='mt-4'>All Movies</h2>
-          <div className='flex justify-between'>
-              <ToggleButton text='adult' isOn={showAdult} onToggle={() => setShowAdult(!showAdult)} />
-          </div>
+
+        <div className="flex items-center gap-2 mt-4">
+          {/* <h2 className="text-2xl font-semibold text-white">All Movies</h2> */}
+          {showLiked 
+          ? <button onClick={() => {
+            setShowLiked(false)
+            
+          }} className="text-white underline hover:text-blue-400 transition duration-200">
+                Show All Movies
+            </button> 
+          : <button onClick={() => {
+            setShowLiked(true)
+          }} className="text-white underline hover:text-blue-400 transition duration-200">
+                Show Liked Movies
+            </button>
+          }
+
+          <p className="text-sm text-gray-300 leading-none"><KeyboardBackspaceIcon /> {showLiked ? 'showing liked movies' : 'showing all movies'}</p>
+        </div>
 
           
+          {!showLiked &&
+                  <div className='flex justify-between'>
+                      <ToggleButton text='adult' isOn={showAdult} onToggle={() => setShowAdult(!showAdult)} />
+                  </div>
+          }
 
+          
+          {
+            loading
+              ? <Spinner />
+            : errorMessage
+              ? <p className='text-red-500 text-center mt-[40px]'>{errorMessage}</p>
+            : showLiked
+              ? likedMovies.length === 0
+                ? <p className='text-red-500 text-center mt-[40px]'>
+                    You haven't liked any movies.
+                  </p>
+                : <ul>
+                    {likedMovies.map(movie => (
+                      <MovieCard
+                        key={movie.id}
+                        unlikeMovie={() => unlikeMovie(movie.id)}
+                        likeMovie={() => likeMovie(movie)}
+                        showAdult={showAdult}
+                        movie={movie}
+                        isLiked={true}
+                      />
+                    ))}
+                  </ul>
+              : movieList.length === 0
+                ? <p className='text-red-500 text-center mt-[40px]'>
+                    No movies matching your search term.
+                  </p>
+                : <ul>
+                    {movieList.map(movie => (
+                      <MovieCard
+                        key={movie.id}
+                        unlikeMovie={() => unlikeMovie(movie.id)}
+                        likeMovie={() => likeMovie(movie)}
+                        showAdult={showAdult}
+                        movie={movie}
+                        isLiked={likedMovies.some(x => x.id === movie.id)}
+                      />
+                    ))}
+                  </ul>
+          }
 
-          {loading ? <Spinner /> : errorMessage ?
-           <p className='text-red-500 text-center mt-[40px]'>{errorMessage}</p> :
-           movieList.length === 0 ? <p className='text-red-500 text-center mt-[40px]'>No movies matching your search term.</p> :
-            <ul>
-              {movieList.map(movie => 
-              <MovieCard
-              key={movie.id} 
-               unlikeMovie={unlikeMovie} 
-               likeMovie={likeMovie} 
-               showAdult={showAdult} 
-               movie={movie} 
-               isLiked={likedMovies.includes(movie.id)}
-               />)}
-            </ul>
-           }
 
         </section>
         {/* <footer className='mt-5'>

@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Search({ searchTerm, searchKey }) {
+function Search({ searchTerm, searchKey, readOnly }) {
   return (
     <div className="search">
         <div>
@@ -9,8 +9,9 @@ function Search({ searchTerm, searchKey }) {
 
             <input type="text"
             value={searchTerm}
-            placeholder='Search movies...'
+            placeholder={readOnly ? 'go to all movies to search' : 'Search movies...'}
             onChange={event => searchKey(event.target.value)}
+            readOnly={readOnly}
             />
         </div>
     </div>

@@ -1,9 +1,9 @@
 import React from 'react'
 
-function LikeButton({ isLiked, likeMovie, unlikeMovie, id }) {
+function LikeButton({ isLiked, likeMovie, unlikeMovie, movie }) {
   return (
     <button className='btn text-2xl' onClick={() => 
-        isLiked ? unlikeMovie(id) : likeMovie(id)
+        isLiked ? unlikeMovie(movie) : likeMovie(movie)
     }>{isLiked ? '❤️' : '🤍'}</button>
   )
 }
