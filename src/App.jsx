@@ -7,9 +7,12 @@ import Toggle from './components/Toggle'
 import { useDebounce } from 'react-use'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-
+import dotenv from 'dotenv';
 
 const BASE_URL = "https://api.themoviedb.org/3"
+
+
+dotenv.config();
 
 const API_KEY = process.env.MOVIE_DB_API_KEY
 
@@ -29,7 +32,7 @@ function App() {
   const [showAdult, setShowAdult] = useState(false);
   const [showLiked, setShowLiked] = useState(false);
   const [debouncedSearchTerm, setdebouncedSearchTerm] = useState('')
-    const [likedMovies, setLikedMovies] = useState([]);
+  const [likedMovies, setLikedMovies] = useState([]);
 
 
 
